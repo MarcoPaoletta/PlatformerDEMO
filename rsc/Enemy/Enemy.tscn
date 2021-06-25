@@ -1,0 +1,75 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://assets/enemies/slimeBlue.png" type="Texture" id=1]
+[ext_resource path="res://assets/enemies/slimeBlue_blue.png" type="Texture" id=2]
+[ext_resource path="res://assets/enemies/slimeBlue_squashed.png" type="Texture" id=3]
+[ext_resource path="res://rsc/Enemy/Enemy.gd" type="Script" id=4]
+[ext_resource path="res://assets/sounds/pepSound2.ogg" type="AudioStream" id=5]
+
+[sub_resource type="SpriteFrames" id=1]
+animations = [ {
+"frames": [ ExtResource( 3 ) ],
+"loop": true,
+"name": "squashed",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 1 ), ExtResource( 2 ) ],
+"loop": true,
+"name": "crawl",
+"speed": 3.0
+} ]
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 20, 13.036 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 17.2315, 2.88784 )
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 27.6951, 10 )
+
+[node name="Enemy" type="KinematicBody2D"]
+collision_layer = 16
+collision_mask = 35
+script = ExtResource( 4 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+position = Vector2( 0, -1 )
+frames = SubResource( 1 )
+animation = "crawl"
+playing = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0.022311, 3.01111 )
+shape = SubResource( 2 )
+
+[node name="FloorChecker" type="RayCast2D" parent="."]
+enabled = true
+cast_to = Vector2( 0, 20 )
+collision_mask = 2
+
+[node name="TopChecker" type="Area2D" parent="."]
+collision_layer = 16
+collision_mask = 33
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TopChecker"]
+position = Vector2( 0.111366, -13.1029 )
+shape = SubResource( 3 )
+
+[node name="SidesCheker" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 33
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SidesCheker"]
+position = Vector2( 0, 4.24743 )
+shape = SubResource( 4 )
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[node name="SoundSquash" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 5 )
+volume_db = -2.0
+[connection signal="body_entered" from="TopChecker" to="." method="_on_TopChecker_body_entered"]
+[connection signal="body_entered" from="SidesCheker" to="." method="_on_SidesCheker_body_entered"]
